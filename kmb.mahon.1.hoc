@@ -1,0 +1,77 @@
+//This is the mahon et al 2000 model as implemented by Kevin Biddell
+// all questions should be directed to Kevin at kevin.biddell@gmail.com
+// 7/7/06
+// this experimental paradigm is trying to replicate fig 2A
+load_file("nrngui.hoc")
+create soma 
+celsius =37 		// the value from mahon et al 2000
+access soma
+
+soma{
+      nseg = 3
+	diam= 5.6419		// from gruber c_cell this gives SA=100 uM^2
+      	L = 5.6419		// from gruber c_cell this gives SA=100 uM^2
+	insert Nam
+	insert Km
+	insert Leakm
+	insert Kirm
+	insert KAfm
+	insert KAsm
+	insert Krpm
+	insert NaPm
+	insert NaSm
+	
+	  
+	
+}
+
+
+
+// create an electrode in the soma that creates two current pulses (200 ms in duration) 200ms apart
+
+objectvar stim1,stim2
+
+stim1 = new IClamp(0.5)
+stim1.del = 100
+stim1.dur = 200
+stim1.amp = 0.00167		//From Fig2Ab correct only for SA=100 uM
+
+stim2 = new IClamp(0.5)
+stim2.del = 500
+stim2.dur = 200
+stim2.amp = 0.00167		//From Fig2Ab correct only for SA=100 uM
+
+
+tstop = 800
+
+v_init = -77.4			//11/13/06
+
+// create an "artificial" synaptic input current
+//THIS IS USED INSTEAD OF THE SECOND CURRENT INJECTED PULSE
+
+	objref Asynm
+	Asynm = new AlphaSynapse(0.1)
+	Asynm.onset = 2000	//this is set at 1400 to keep it from going to include make 500
+	Asynm.tau   = 15  
+	Asynm.gmax  = 0.0000345 // this is in mhos in the article it is 0.0345 mS
+	Asynm.e     = 0
+
+	// the background noise input only use during synaptic input
+	objref mnoise
+	mnoise= new NetStim(0.1)
+	mnoise.interval=7
+	mnoise.number=6
+	mnoise.start=2000	//this is set at 1400 to keep it from going, to include make 500
+	mnoise.noise=1
+	
+	// creating the input point
+	objectvar syn
+	soma syn= new ExpSyn(0) // 15 ms is the decay time
+	syn.tau=15		// this tau is for each spike of voltage
+	syn.e=0
+	
+// creating the connection between mnoise and syn
+	objref bridge
+	mnoise bridge = new NetCon(mnoise,syn,-77.4,0.1,0.000004) //turn up or down change weight (last variable)
+	// if ths is not satisfactory maybe you could input the noise into the created alpha synapse
+	

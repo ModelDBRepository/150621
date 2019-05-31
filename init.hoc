@@ -1,0 +1,21 @@
+load_file("nrngui.hoc")
+
+proc fig2a() {
+  load_file("kmb.mahon.1.hoc")
+  load_file("figure2a.ses")
+  print "press Init * Run to start"
+}
+
+proc fig3a() {
+  load_file("kmb.mahon.1.hoc")
+  load_file("figure3a.ses")
+  print "set the time of the current clamps to 1400"
+  print "and then press Init & Run to generate Fig 3Aa."
+  print "For Fig3Ab set one of the current clamps to start at 100 ms."
+}
+
+xpanel("Mahon et al. 2000")
+  xbutton("Figure 2A","fig2a()")
+  xbutton("Figure 3A","fig3a()")
+  xbutton("Quit","quit()")
+xpanel()
